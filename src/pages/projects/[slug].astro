@@ -1,0 +1,29 @@
+---
+import projects from "@data/projects.json";
+import "@styles/tailwind.css";
+
+interface Project {
+  slug: string;
+  title: string;
+}
+
+export function getStaticPaths() {
+  return (projects as Project[]).map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{project.title}</title>
+  </head>
+  <body>
+    <h1>{project.title}</h1>
+  </body>
+</html>
