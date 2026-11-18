@@ -1,0 +1,34 @@
+[
+  {
+    "role": "Creativa publicitaria",
+    "company": "Agencia Norte",
+    "location": "Madrid",
+    "start": "2024",
+    "end": null,
+    "description": "Conceptualización y copy de campañas 360 para marcas de gran consumo, desde el brief hasta la pieza final."
+  },
+  {
+    "role": "Copywriter",
+    "company": "Estudio Brisa",
+    "location": "Valencia",
+    "start": "2022",
+    "end": "2024",
+    "description": "Naming, tono de voz y contenido social para marcas emergentes. Primeros premios, primeras noches sin dormir."
+  },
+  {
+    "role": "Becaria de cuentas y social media",
+    "company": "Agencia Mar",
+    "location": "Sevilla",
+    "start": "2021",
+    "end": "2022",
+    "description": "Gestión de comunidades, calendarios editoriales y apoyo a cuentas. Aquí aprendí a leer un brief entre líneas."
+  },
+  {
+    "role": "Grado en Publicidad y Relaciones Públicas",
+    "company": "Universidad",
+    "location": "España",
+    "start": "2017",
+    "end": "2021",
+    "description": "Formación en estrategia, creatividad, investigación de mercados y comunicación audiovisual."
+  }
+]

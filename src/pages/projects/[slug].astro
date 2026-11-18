@@ -1,29 +1,374 @@
 ---
-import projects from "@data/projects.json";
-import "@styles/tailwind.css";
-
-interface Project {
-  slug: string;
-  title: string;
-}
+import BaseLayout from '@layouts/BaseLayout.astro';
+import ProjectCover from '@components/projects/ProjectCover.astro';
+import {
+  CATEGORY_LABELS,
+  coverTransitionName,
+  getNextProject,
+  projects,
+  type Project,
+} from '@utils/projects';
 
 export function getStaticPaths() {
-  return (projects as Project[]).map((project) => ({
+  return projects.map((project) => ({
     params: { slug: project.slug },
     props: { project },
   }));
 }
 
+interface Props {
+  project: Project;
+}
+
 const { project } = Astro.props;
+const next = getNextProject(project.slug);
+
+const facts = [
+  { label: 'Cliente', value: project.client },
+  { label: 'Año', value: String(project.year) },
+  { label: 'Mi papel', value: project.role },
+  { label: 'Disciplina', value: CATEGORY_LABELS[project.category] },
+];
+
+// Variantes alternas para la galería generativa
+const galleryVariants = [2, 3, 1] as const;
 ---
 
-<html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>{project.title}</title>
-  </head>
-  <body>
-    <h1>{project.title}</h1>
-  </body>
-</html>
+<BaseLayout title={project.title} description={project.summary}>
+  <article class="case">
+    <header class="wrap case__head">
+      <a class="case__back link-fancy" href="/projects">
+        <span aria-hidden="true">←</span> Todos los proyectos
+      </a>
+
+      <p class="case__eyebrow">
+        {CATEGORY_LABELS[project.category]} <span aria-hidden="true">·</span>{' '}
+        {project.year}
+      </p>
+      <h1 class="case__title">{project.title}</h1>
+      <p class="case__summary serif-accent">{project.summary}</p>
+    </header>
+
+    <div class="wrap">
+      <ProjectCover
+        project={project}
+        size="hero"
+        transitionName={coverTransitionName(project.slug)}
+        alt={`Imagen principal de ${project.title}`}
+        eager
+      />
+    </div>
+
+    <div class="wrap case__body">
+      <dl class="case__facts">
+        {
+          facts.map((fact) => (
+            <div>
+              <dt>{fact.label}</dt>
+              <dd>{fact.value}</dd>
+            </div>
+          ))
+        }
+        <div>
+          <dt>Disciplinas</dt>
+          <dd>
+            <ul class="case__tags">
+              {project.disciplines.map((d) => <li class="tag">{d}</li>)}
+            </ul>
+          </dd>
+        </div>
+      </dl>
+
+      <div class="case__story">
+        <section class="case__block reveal" aria-labelledby="reto">
+          <h2 id="reto"><span aria-hidden="true">01 · </span>El reto</h2>
+          <p>{project.challenge}</p>
+        </section>
+        <section class="case__block reveal" aria-labelledby="idea">
+          <h2 id="idea"><span aria-hidden="true">02 · </span>La idea</h2>
+          <p class="case__idea">{project.idea}</p>
+        </section>
+      </div>
+    </div>
+
+    <section class="wrap case__gallery" aria-labelledby="piezas">
+      <h2 id="piezas" class="case__subtitle">Las piezas</h2>
+      <ul class="case__pieces">
+        {
+          project.images.length > 0
+            ? project.images.map((src, i) => (
+                <li class="reveal">
+                  <img src={src} alt={`${project.title}: pieza ${i + 1}`} loading="lazy" decoding="async" />
+                </li>
+              ))
+            : project.deliverables.map((piece, i) => (
+                <li class="reveal">
+                  <figure>
+                    <ProjectCover
+                      project={{ ...project, cover: null }}
+                      size="tile"
+                      label={piece}
+                      variant={galleryVariants[i % galleryVariants.length]}
+                    />
+                    <figcaption>{piece}</figcaption>
+                  </figure>
+                </li>
+              ))
+        }
+      </ul>
+    </section>
+
+    <section class="case__results surface-inverse" aria-labelledby="resultados">
+      <div class="wrap">
+        <h2 id="resultados" class="case__subtitle">
+          <span aria-hidden="true">03 · </span>Resultados
+        </h2>
+        <dl class="case__stats">
+          {
+            project.results.map((result) => (
+              <div class="reveal">
+                <dt>{result.label}</dt>
+                <dd>{result.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {
+      next && (
+        <nav class="wrap case__next" aria-label="Siguiente proyecto">
+          <a href={`/projects/${next.slug}`} class="next-link">
+            <span class="next-link__kicker">Siguiente caso</span>
+            <span class="next-link__title">
+              {next.title} <span aria-hidden="true">→</span>
+            </span>
+          </a>
+        </nav>
+      )
+    }
+  </article>
+</BaseLayout>
+
+<style>
+  .case__head {
+    display: grid;
+    gap: 1.25rem;
+    padding-block: clamp(2rem, 1.5rem + 3vw, 4.5rem) clamp(2rem, 1.5rem + 2vw, 3rem);
+  }
+
+  .case__back {
+    justify-self: start;
+    font-weight: 600;
+  }
+
+  .case__eyebrow {
+    margin-block-start: 1rem;
+    font-size: var(--text-caption);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .case__title {
+    font-size: var(--text-mega);
+    font-weight: 800;
+    letter-spacing: -0.045em;
+    line-height: 0.92;
+    max-inline-size: 16ch;
+  }
+
+  .case__summary {
+    max-inline-size: 32ch;
+    font-size: var(--text-title);
+    line-height: 1.2;
+    color: var(--accent-text);
+  }
+
+  /* ---------- Cuerpo ---------- */
+  .case__body {
+    display: grid;
+    gap: clamp(3rem, 2rem + 4vw, 6rem);
+    padding-block: clamp(3rem, 2rem + 4vw, 6rem);
+
+    @media (min-width: 56rem) {
+      grid-template-columns: 18rem 1fr;
+      align-items: start;
+    }
+  }
+
+  .case__facts {
+    display: grid;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    border: 2px solid var(--ink);
+    border-radius: 1.25rem;
+
+    @media (min-width: 56rem) {
+      position: sticky;
+      inset-block-start: 6rem;
+    }
+
+    dt {
+      font-size: var(--text-caption);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    dd {
+      margin-block-start: 0.2rem;
+      font-weight: 600;
+    }
+  }
+
+  .case__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-block-start: 0.4rem;
+  }
+
+  .case__story {
+    display: grid;
+    gap: clamp(2.5rem, 2rem + 2vw, 4rem);
+  }
+
+  .case__block {
+    display: grid;
+    gap: 1rem;
+    max-inline-size: 62ch;
+
+    h2 {
+      font-size: var(--text-title);
+
+      span {
+        color: var(--ink-soft);
+      }
+    }
+
+    p {
+      font-size: var(--text-lead);
+      line-height: 1.5;
+      color: var(--ink-soft);
+    }
+
+    .case__idea {
+      font-size: var(--text-title);
+      font-weight: 600;
+      line-height: 1.3;
+      letter-spacing: -0.015em;
+      color: var(--ink);
+    }
+  }
+
+  /* ---------- Galería ---------- */
+  .case__gallery {
+    padding-block-end: clamp(3rem, 2rem + 4vw, 6rem);
+  }
+
+  .case__subtitle {
+    font-size: var(--text-display);
+    letter-spacing: -0.03em;
+
+    span {
+      color: var(--ink-soft);
+    }
+  }
+
+  .case__pieces {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: 1rem;
+    margin-block-start: 2rem;
+
+    img {
+      inline-size: 100%;
+      border-radius: 1.25rem;
+    }
+
+    figcaption {
+      margin-block-start: 0.75rem;
+      font-weight: 600;
+    }
+
+    li:nth-child(even) {
+      @media (min-width: 48rem) {
+        margin-block-start: 3rem;
+      }
+    }
+  }
+
+  /* ---------- Resultados ---------- */
+  .case__results {
+    padding-block: clamp(3.5rem, 2.5rem + 4vw, 6rem);
+  }
+
+  .case__stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: 2rem;
+    margin-block-start: 2.5rem;
+
+    div {
+      display: flex;
+      flex-direction: column-reverse;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      padding-block-start: 1.25rem;
+      border-block-start: 2px solid var(--ink);
+    }
+
+    dd {
+      font-size: var(--text-mega);
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      line-height: 0.9;
+      color: var(--accent-text);
+    }
+
+    dt {
+      color: var(--ink-soft);
+    }
+  }
+
+  /* ---------- Siguiente ---------- */
+  .case__next {
+    padding-block: clamp(3rem, 2rem + 4vw, 6rem);
+  }
+
+  .next-link {
+    display: grid;
+    gap: 0.5rem;
+    text-decoration: none;
+
+    &:hover .next-link__title {
+      background-size: 100% 100%;
+      color: var(--on-accent);
+    }
+  }
+
+  .next-link__kicker {
+    font-size: var(--text-caption);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .next-link__title {
+    justify-self: start;
+    font-size: var(--text-mega);
+    font-weight: 800;
+    letter-spacing: -0.045em;
+    line-height: 1;
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 100% 0.1em;
+    transition: background-size 0.4s var(--ease-out-expo);
+  }
+</style>

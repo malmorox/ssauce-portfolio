@@ -1,0 +1,221 @@
+/* ==========================================================================
+   TOP LAYER: toasts y diálogos
+   (fuera de los <style> con scope: @starting-style y ::backdrop van globales)
+   ========================================================================== */
+@layer components {
+  /* ---------- Toasts (popover="manual") ---------- */
+  .toast {
+    position: fixed;
+    inset: auto max(1rem, 3vw) calc(1rem + var(--toast-offset, 0px)) auto;
+    inline-size: min(24rem, calc(100dvw - 2rem));
+    margin: 0;
+    padding: 1rem 3rem 1rem 1.25rem;
+    border: 2px solid var(--ink);
+    border-radius: 1rem;
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: 6px 6px 0 var(--ink);
+    overflow: visible;
+
+    opacity: 0;
+    transition-property: opacity, translate, bottom, display, overlay;
+    transition-duration: 0.35s;
+    transition-timing-function: var(--ease-out-expo);
+    transition-behavior: allow-discrete;
+
+    @media (prefers-reduced-motion: no-preference) {
+      translate: 0 1rem;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      transition-duration: 0.1s;
+    }
+
+    .toast__title {
+      font-weight: 700;
+      line-height: 1.25;
+    }
+    .toast__body {
+      margin-block-start: 0.25rem;
+      font-size: var(--text-caption);
+      color: var(--ink-soft);
+    }
+    .toast__close {
+      position: absolute;
+      inset-block-start: 0.5rem;
+      inset-inline-end: 0.5rem;
+      display: grid;
+      place-items: center;
+      inline-size: 2rem;
+      block-size: 2rem;
+      border-radius: 50%;
+      font-size: 1.25rem;
+      line-height: 1;
+      cursor: pointer;
+
+      &:hover {
+        background: var(--paper-2);
+      }
+    }
+  }
+
+  .toast:is(:popover-open, .\:popover-open):where(:not([data-closing])) {
+    opacity: 1;
+    @starting-style {
+      opacity: 0;
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      translate: 0 0;
+      @starting-style {
+        translate: 0 1rem;
+      }
+    }
+  }
+
+  /* ---------- Diálogo de la pausa publicitaria ---------- */
+  .ad-break {
+    inline-size: min(44rem, calc(100dvw - 2rem));
+    max-block-size: calc(100dvh - 2rem);
+    padding: 0;
+    border: 3px solid var(--accent);
+    border-radius: 1.5rem;
+    background: var(--color-night);
+    color: var(--color-lavender-blush);
+    overflow: auto;
+
+    opacity: 0;
+    transition-property: opacity, scale, display, overlay;
+    transition-duration: 0.4s;
+    transition-timing-function: var(--ease-out-expo);
+    transition-behavior: allow-discrete;
+
+    @media (prefers-reduced-motion: no-preference) {
+      scale: 0.92;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      transition-duration: 0.1s;
+    }
+
+    &::backdrop {
+      background-color: rgb(0 23 34 / 0);
+      transition-property: background-color, display, overlay;
+      transition-duration: 0.4s;
+      transition-behavior: allow-discrete;
+    }
+  }
+
+  .ad-break[open]:where(:not([data-closing])) {
+    opacity: 1;
+    @starting-style {
+      opacity: 0;
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      scale: 1;
+      @starting-style {
+        scale: 0.92;
+      }
+    }
+
+    &::backdrop {
+      background-color: rgb(0 23 34 / 0.75);
+      @starting-style {
+        background-color: rgb(0 23 34 / 0);
+      }
+    }
+  }
+
+  /* ---------- Confeti ---------- */
+  .confetti {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    overflow: hidden;
+
+    > i {
+      position: absolute;
+      inset-block-start: 0;
+      inline-size: 0.6rem;
+      block-size: 0.9rem;
+      border-radius: 2px;
+    }
+  }
+}
+
+/* ==========================================================================
+   MOTION GLOBAL
+   ========================================================================== */
+
+/* Transiciones entre páginas (MPA): progresivas, sin fallback necesario */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+}
+
+::view-transition-old(root) {
+  animation: 0.3s ease-in both vt-fade-out;
+}
+::view-transition-new(root) {
+  animation: 0.45s var(--ease-out-expo) both vt-rise-in;
+}
+
+/* Portadas de proyecto: morph de tarjeta → cabecera del caso */
+::view-transition-group(.project-cover) {
+  animation-duration: 0.55s;
+  animation-timing-function: var(--ease-out-expo);
+}
+::view-transition-old(.project-cover),
+::view-transition-new(.project-cover) {
+  block-size: 100%;
+  object-fit: cover;
+}
+
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-rise-in {
+  from {
+    opacity: 0;
+    translate: 0 1.5rem;
+  }
+}
+
+/* Cambio de tema (modo picante): revelado circular controlado desde JS */
+.is-theme-switching::view-transition-old(root),
+.is-theme-switching::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+.is-theme-switching .site-header {
+  view-transition-name: none;
+}
+
+/* Barra de progreso de lectura (decorativa) */
+.scroll-progress {
+  display: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    .scroll-progress {
+      display: block;
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 60;
+      block-size: 4px;
+      background: var(--accent);
+      transform-origin: 0 50%;
+      animation: grow-progress auto linear;
+      animation-timeline: scroll(root);
+    }
+  }
+}
+@keyframes grow-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}

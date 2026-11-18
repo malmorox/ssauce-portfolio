@@ -1,0 +1,103 @@
+---
+import { Font } from 'astro:assets';
+import '@styles/tailwind.css';
+import SiteHeader from '@components/SiteHeader.astro';
+import SiteFooter from '@components/SiteFooter.astro';
+import AdBreak from '@components/easter-eggs/AdBreak.astro';
+import profile from '@data/profile.json';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = `${profile.name} — ${profile.roles.join(', ').toLowerCase()}. ${profile.intro}`,
+} = Astro.props;
+
+const fullTitle = title ? `${title} · ${profile.name}` : `${profile.name} — ${profile.roles[0]}`;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#eee5e9" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#003249" media="(prefers-color-scheme: dark)" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <Font cssVariable="--font-bricolage" preload />
+    <Font cssVariable="--font-instrument" />
+
+    <!-- Aplica el modo picante antes de pintar, para que no parpadee -->
+    <script is:inline>
+      try {
+        if (localStorage.getItem('ss:picante') === '1') {
+          document.documentElement.dataset.theme = 'picante';
+        }
+      } catch {}
+    </script>
+
+    <!-- Fallback de text-fit para los lockups (Firefox/Safari). Cada lockup
+         llama a __fitLockup justo después de parsearse, antes del primer pintado. -->
+    <script is:inline>
+      if (!CSS.supports('text-fit', 'grow per-line-all')) {
+        const fit = (lockup) => {
+          const lines = [...lockup.querySelectorAll(':scope > span')];
+          for (const line of lines) line.style.removeProperty('--text-fit-scale');
+          // Todas las lecturas primero, luego todas las escrituras (un solo reflow)
+          const scales = lines.map((line) => lockup.clientWidth / line.offsetWidth);
+          lines.forEach((line, i) => line.style.setProperty('--text-fit-scale', scales[i]));
+        };
+        const ro = new ResizeObserver((entries) => entries.forEach((e) => fit(e.target)));
+        window.__fitLockup = (el) => {
+          if (!el) return;
+          fit(el);
+          ro.observe(el);
+        };
+        document.fonts?.ready.then(() => document.querySelectorAll('.lockup').forEach(fit));
+      }
+    </script>
+  </head>
+  <body>
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[70] focus:rounded-full focus:bg-ink focus:px-5 focus:py-3 focus:text-paper"
+    >
+      Saltar al contenido
+    </a>
+    <div class="scroll-progress" aria-hidden="true"></div>
+
+    <SiteHeader />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <SiteFooter />
+
+    <AdBreak />
+
+    <!-- Avisos: región fija para que los lectores de pantalla la encuentren siempre -->
+    <div id="toast-region" role="region" aria-label="Avisos"></div>
+    <p class="sr-only">Anuncios para lectores de pantalla</p>
+    <div id="sr-announcer" class="sr-only" aria-live="polite"></div>
+
+    <script>
+      // Polyfill de popover solo si el navegador no lo soporta
+      if (!Object.hasOwn(HTMLElement.prototype, 'popover')) {
+        import('@oddbird/popover-polyfill');
+      }
+      import '../scripts/easter-eggs';
+    </script>
+  </body>
+</html>

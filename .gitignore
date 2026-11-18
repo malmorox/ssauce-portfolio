@@ -25,3 +25,9 @@ pnpm-debug.log*
 
 # AI agent instructions
 AGENTS.md
+
+# AI local agents
+.claude/
+.agents/
+.claude/skills/
+skills-lock.json

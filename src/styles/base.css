@@ -1,0 +1,73 @@
+/* ==========================================================================
+   BASE
+   ========================================================================== */
+@layer base {
+  :root {
+    accent-color: var(--accent);
+    scroll-padding-block-start: 6rem;
+
+    @media (prefers-reduced-motion: no-preference) {
+      scroll-behavior: smooth;
+    }
+  }
+
+  html {
+    background-color: var(--paper);
+    color: var(--ink);
+  }
+
+  body {
+    min-block-size: 100dvh;
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.55;
+    font-optical-sizing: auto;
+    background-color: var(--paper);
+    /* Grano de papel: ruido SVG en escala de grises, muy sutil */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.07'/%3E%3C/svg%3E");
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    line-height: 1.05;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  p,
+  li,
+  blockquote {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: inherit;
+    overflow-wrap: break-word;
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: var(--on-accent);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--ink);
+    outline-offset: 3px;
+    border-radius: 0.25rem;
+  }
+
+  /* Tailwind preflight quita el margin:auto que centra los modales */
+  dialog:modal {
+    margin: auto;
+    overscroll-behavior: contain;
+  }
+
+  dialog::backdrop {
+    overflow: hidden;
+    overscroll-behavior: contain;
+  }
+}

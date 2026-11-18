@@ -1,0 +1,251 @@
+---
+import Lockup from '@components/ui/Lockup.astro';
+import SectionLabel from '@components/ui/SectionLabel.astro';
+import profile from '@data/profile.json';
+
+const { manifesto, bio, stats } = profile.about;
+const initials = profile.name
+  .split(' ')
+  .map((w) => w[0])
+  .join('');
+---
+
+<section class="section about" id="sobre-mi" aria-labelledby="about-title">
+  <div class="wrap">
+    <SectionLabel number="02" label="El insight" />
+
+    <div class="about__grid">
+      <figure class="about__photo reveal">
+        <span class="about__tape about__tape--a" aria-hidden="true"></span>
+        <span class="about__tape about__tape--b" aria-hidden="true"></span>
+        {
+          profile.photo ? (
+            <img src={profile.photo} alt={`Retrato de ${profile.name}`} loading="lazy" decoding="async" />
+          ) : (
+            <div class="about__photo-placeholder" aria-hidden="true">
+              <span>{initials}</span>
+            </div>
+          )
+        }
+        <figcaption class="serif-accent">
+          {profile.photo ? profile.name : 'Aquí irá una foto muy profesional (o no).'}
+        </figcaption>
+      </figure>
+
+      <div class="about__content">
+        <Lockup
+          as="h2"
+          id="about-title"
+          lines={[manifesto[0], manifesto[1], { text: manifesto[2], serif: true, class: 'about__accent' }]}
+        />
+
+        <div class="about__bio">
+          {bio.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+
+        <dl class="about__stats">
+          {
+            stats.map((stat) => (
+              <div class="about__stat reveal">
+                <dt>{stat.label}</dt>
+                <dd>{stat.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </div>
+
+    <div class="toolbox">
+      <h3 class="toolbox__title">Mi caja de herramientas</h3>
+      <ul class="toolbox__list">
+        {profile.tools.map((tool) => <li class="toolbox__item">{tool}</li>)}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about__grid {
+    display: grid;
+    gap: clamp(3rem, 2rem + 4vw, 6rem);
+    margin-block-start: clamp(2.5rem, 2rem + 3vw, 4.5rem);
+
+    @media (min-width: 56rem) {
+      grid-template-columns: minmax(16rem, 0.75fr) 1.5fr;
+      align-items: start;
+    }
+  }
+
+  /* ---------- Polaroid ---------- */
+  .about__photo {
+    position: relative;
+    justify-self: center;
+    inline-size: min(100%, 22rem);
+    padding: 0.9rem 0.9rem 0;
+    background: color-mix(in oklab, var(--color-lavender-blush), white 55%);
+    color: var(--color-deep-space-blue);
+    border-radius: 0.35rem;
+    box-shadow:
+      0 1px 2px rgb(0 23 34 / 0.12),
+      0 18px 40px -12px rgb(0 23 34 / 0.35);
+    rotate: -3deg;
+    transition: rotate 0.5s var(--ease-out-back);
+
+    &:hover {
+      rotate: 1deg;
+    }
+
+    img,
+    .about__photo-placeholder {
+      display: block;
+      inline-size: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+    }
+
+    figcaption {
+      padding: 0.9rem 0.25rem 1.1rem;
+      font-size: var(--text-lead);
+      line-height: 1.2;
+      text-align: center;
+      text-wrap: balance;
+    }
+
+    @media (min-width: 56rem) {
+      position: sticky;
+      inset-block-start: 7rem;
+    }
+  }
+
+  .about__photo-placeholder {
+    display: grid;
+    place-items: center;
+    container-type: inline-size;
+    background:
+      radial-gradient(circle at 70% 25%, var(--color-light-green) 0 22%, transparent 22.5%),
+      linear-gradient(160deg, var(--color-cerulean), var(--color-deep-space-blue));
+
+    span {
+      font-size: 42cqi;
+      font-weight: 800;
+      letter-spacing: -0.06em;
+      color: var(--color-wild-strawberry);
+    }
+  }
+
+  .about__tape {
+    position: absolute;
+    z-index: 1;
+    inline-size: 5.5rem;
+    block-size: 1.6rem;
+    background: color-mix(in oklab, var(--color-light-green) 70%, transparent);
+    inset-block-start: -0.7rem;
+  }
+  .about__tape--a {
+    inset-inline-start: -1rem;
+    rotate: -28deg;
+  }
+  .about__tape--b {
+    inset-inline-end: -1rem;
+    rotate: 24deg;
+    background: color-mix(in oklab, var(--color-wild-strawberry) 70%, transparent);
+  }
+
+  /* ---------- Texto ---------- */
+  .about__content {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  .about__content :global(.about__accent) {
+    color: var(--accent-text);
+  }
+
+  .about__bio {
+    display: grid;
+    gap: 1.1rem;
+    max-inline-size: 60ch;
+    font-size: var(--text-lead);
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+
+  .about__stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 1rem;
+  }
+
+  .about__stat {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    gap: 0.35rem;
+    padding: 1.25rem;
+    border: 2px solid var(--ink);
+    border-radius: 1rem;
+
+    dd {
+      font-size: var(--text-display);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+
+    dt {
+      font-size: var(--text-caption);
+      color: var(--ink-soft);
+    }
+
+    &:nth-child(1) {
+      background: var(--pop);
+      color: var(--on-pop);
+      border-color: var(--on-pop);
+      dt { color: inherit; }
+    }
+  }
+
+  /* ---------- Herramientas ---------- */
+  .toolbox {
+    margin-block-start: clamp(4rem, 3rem + 4vw, 7rem);
+  }
+
+  .toolbox__title {
+    font-size: var(--text-title);
+  }
+
+  .toolbox__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-block-start: 1.5rem;
+  }
+
+  .toolbox__item {
+    padding: 0.55em 1.1em;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    background: var(--paper);
+    font-weight: 600;
+    rotate: var(--r, 0deg);
+    transition:
+      rotate 0.3s var(--ease-out-back),
+      background-color 0.2s,
+      color 0.2s;
+
+    &:nth-child(3n + 1) { --r: -2deg; }
+    &:nth-child(3n + 2) { --r: 1.5deg; }
+    &:nth-child(4n) {
+      background: var(--accent);
+      color: var(--on-accent);
+      border-color: var(--on-accent);
+    }
+
+    &:hover {
+      --r: 0deg;
+      background: var(--pop);
+      color: var(--on-pop);
+    }
+  }
+</style>

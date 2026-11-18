@@ -1,0 +1,125 @@
+/* ==========================================================================
+   1. PALETA DE MARCA
+   --------------------------------------------------------------------------
+   ⚠️  Para cambiar los colores del portfolio, toca SOLO este bloque.
+   El resto del sitio nunca usa estos valores directamente: usa los tokens
+   semánticos de abajo (--paper, --ink, --accent…).
+   También generan utilidades de Tailwind: bg-cerulean, text-night…
+   ========================================================================== */
+@theme {
+  --color-cerulean: #007ea7;
+  --color-light-green: #91f5ad;
+  --color-deep-space-blue: #003249;
+  --color-wild-strawberry: #f75590;
+  --color-lavender-blush: #eee5e9;
+  /* Derivado: deep-space más profundo, para tinta sobre fresa y fondos nocturnos */
+  --color-night: #001722;
+
+  /* Escala tipográfica fluida (máximo ≤ 2.5× el mínimo para respetar el zoom) */
+  --text-caption: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+  --text-body: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  --text-lead: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
+  --text-title: clamp(1.375rem, 1.1rem + 1.3vw, 2.25rem);
+  --text-display: clamp(1.75rem, 1.2rem + 2.6vw, 3.5rem);
+  --text-mega: clamp(2.25rem, 1.3rem + 4.4vw, 5.5rem);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Utilidades de Tailwind que apuntan a tokens semánticos (se resuelven en
+   cada elemento, así .surface-inverse puede reinvertirlos localmente). */
+@theme inline {
+  --font-sans: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
+
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-pop: var(--pop);
+  --color-on-pop: var(--on-pop);
+  --color-cool: var(--cool);
+  --color-on-cool: var(--on-cool);
+  --color-accent-text: var(--accent-text);
+}
+
+/* ==========================================================================
+   2. TOKENS SEMÁNTICOS
+   --------------------------------------------------------------------------
+   Contrastes comprobados (WCAG):
+   · ink sobre paper ............ 12:1   · ink-soft sobre paper ... ≥ 5.5:1
+   · accent-text (solo ≥ 24px) .. 3.7:1  · on-accent sobre accent .. 5.8:1
+   · El fresa NUNCA se usa como color de texto sobre lavanda (2.6:1).
+   ========================================================================== */
+@layer base {
+  :root {
+    color-scheme: light dark;
+
+    --paper: var(--color-lavender-blush);
+    --ink: var(--color-deep-space-blue);
+    --soft-amount: 75%;
+
+    --accent: var(--color-wild-strawberry); /* fondos, stickers, subrayados */
+    --on-accent: var(--color-night);
+    --pop: var(--color-light-green);
+    --on-pop: var(--color-deep-space-blue);
+    --cool: var(--color-cerulean);
+    --on-cool: #fff;
+    --accent-text: var(--color-cerulean); /* solo texto grande */
+
+    --inverse-paper: var(--color-deep-space-blue);
+    --inverse-ink: var(--color-lavender-blush);
+    --inverse-accent-text: var(--color-light-green);
+
+    /* Modo oscuro automático según el sistema */
+    @media (prefers-color-scheme: dark) {
+      --paper: var(--color-deep-space-blue);
+      --ink: var(--color-lavender-blush);
+      --accent-text: var(--color-light-green);
+      --inverse-paper: var(--color-night);
+    }
+  }
+
+  /* 🌶️ Easter egg: escribe «salsa» en el teclado */
+  :root[data-theme='picante'] {
+    color-scheme: light;
+
+    --paper: var(--color-wild-strawberry);
+    --ink: var(--color-night);
+    --soft-amount: 88%;
+
+    --accent: var(--color-light-green);
+    --on-accent: var(--color-night);
+    --pop: var(--color-lavender-blush);
+    --on-pop: var(--color-night);
+    --cool: var(--color-deep-space-blue);
+    --on-cool: var(--color-lavender-blush);
+    --accent-text: var(--color-night);
+
+    --inverse-paper: var(--color-night);
+    --inverse-ink: var(--color-lavender-blush);
+    --inverse-accent-text: var(--color-wild-strawberry);
+  }
+
+  /* Tokens derivados: se recalculan allí donde cambian paper/ink */
+  :root,
+  .surface-inverse {
+    --paper-2: color-mix(in oklab, var(--paper), var(--ink) 6%);
+    --ink-soft: color-mix(in oklab, var(--ink) var(--soft-amount), var(--paper));
+    --line: color-mix(in oklab, var(--ink) 18%, transparent);
+    --line-strong: color-mix(in oklab, var(--ink) 60%, var(--paper));
+  }
+
+  @media (forced-colors: active) {
+    :root {
+      --paper: Canvas;
+      --ink: CanvasText;
+      --accent: Highlight;
+      --on-accent: HighlightText;
+    }
+  }
+}

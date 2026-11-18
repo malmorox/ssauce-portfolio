@@ -1,0 +1,195 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Lockup from '@components/ui/Lockup.astro';
+import SectionLabel from '@components/ui/SectionLabel.astro';
+import ProjectCard from '@components/projects/ProjectCard.astro';
+import { CATEGORY_LABELS, categories, projects } from '@utils/projects';
+
+const countFor = (category: string) => projects.filter((p) => p.category === category).length;
+
+// Filtro sin JS: cada radio marcado oculta las tarjetas de otras categorías
+const filterCss = categories
+  .map(
+    (c) =>
+      `.projects-browser:has(input[name="filter"][value="${c}"]:checked) .projects-grid > li:not([data-category="${c}"]) { display: none; }`,
+  )
+  .join('\n');
+---
+
+<BaseLayout
+  title="Proyectos"
+  description="Campañas, branding, copy y social media: una selección de proyectos de Sofía Sauce."
+>
+  <section class="section projects-page" aria-labelledby="projects-title">
+    <div class="wrap">
+      <SectionLabel number="04" label="Las campañas" />
+
+      <div class="projects-page__head">
+        <Lockup
+          as="h1"
+          id="projects-title"
+          lines={['Proyectos', { text: 'con historia', serif: true, class: 'projects-page__accent' }]}
+          base="clamp(2rem, 1.25rem + 3.5vw, 4.5rem)"
+        />
+        <p class="projects-page__intro">
+          Cada proyecto empezó con un brief y una pregunta incómoda. Aquí están las respuestas.
+        </p>
+      </div>
+
+      <div class="projects-browser">
+        <style is:inline set:html={filterCss}></style>
+
+        <fieldset class="filters">
+          <legend class="sr-only">Filtrar proyectos por disciplina</legend>
+          <label class="filter">
+            <input type="radio" name="filter" value="all" checked />
+            <span>Todos <span class="filter__count">{projects.length}</span></span>
+          </label>
+          {
+            categories.map((c) => (
+              <label class="filter">
+                <input type="radio" name="filter" value={c} />
+                <span>
+                  {CATEGORY_LABELS[c]} <span class="filter__count">{countFor(c)}</span>
+                </span>
+              </label>
+            ))
+          }
+        </fieldset>
+
+        <ul class="projects-grid">
+          {
+            projects.map((project) => (
+              <li data-category={project.category}>
+                <ProjectCard project={project} headingLevel="h2" />
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .projects-page {
+    padding-block-start: clamp(2.5rem, 2rem + 3vw, 5rem);
+  }
+
+  .projects-page__head {
+    display: grid;
+    gap: 1.5rem;
+    margin-block: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+
+    @media (min-width: 56rem) {
+      grid-template-columns: 1.6fr 1fr;
+      align-items: end;
+      gap: 4rem;
+    }
+  }
+
+  .projects-page__head :global(.projects-page__accent) {
+    color: var(--accent-text);
+  }
+
+  .projects-page__intro {
+    max-inline-size: 36ch;
+    font-size: var(--text-lead);
+    color: var(--ink-soft);
+  }
+
+  /* ---------- Filtros ---------- */
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-block-end: clamp(2rem, 1.5rem + 2vw, 3rem);
+  }
+
+  .filter {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 2.75rem;
+    padding: 0.5rem 1.1rem;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      background-color 0.2s,
+      color 0.2s;
+
+    input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    &:hover {
+      background: var(--paper-2);
+    }
+
+    &:has(input:checked) {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    &:has(input:focus-visible) {
+      outline: 3px solid var(--ink);
+      outline-offset: 3px;
+    }
+
+    @media (forced-colors: active) {
+      &:has(input:checked) {
+        outline: 3px solid Highlight;
+      }
+    }
+  }
+
+  .filter__count {
+    margin-inline-start: 0.35rem;
+    font-size: var(--text-caption);
+    font-variant-numeric: tabular-nums;
+    opacity: 0.75;
+  }
+
+  /* ---------- Rejilla ---------- */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+    gap: clamp(2.5rem, 2rem + 2vw, 4rem) clamp(1rem, 0.5rem + 2vw, 2.5rem);
+
+    > li {
+      /* Entrada suave cuando un filtro vuelve a mostrar la tarjeta */
+      transition:
+        opacity 0.4s var(--ease-out-expo),
+        translate 0.4s var(--ease-out-expo),
+        display 0.4s;
+      transition-behavior: allow-discrete;
+
+      @starting-style {
+        opacity: 0;
+        @media (prefers-reduced-motion: no-preference) {
+          translate: 0 1rem;
+        }
+      }
+    }
+  }
+</style>
+
+<script>
+  import { announce } from '../../scripts/announce';
+
+  const browser = document.querySelector('.projects-browser');
+  const items = [...(browser?.querySelectorAll<HTMLElement>('.projects-grid > li') ?? [])];
+
+  browser?.addEventListener('change', (e) => {
+    const input = e.target as HTMLInputElement;
+    if (input.name !== 'filter') return;
+    const visible = items.filter(
+      (li) => input.value === 'all' || li.dataset.category === input.value,
+    ).length;
+    announce(`Mostrando ${visible} ${visible === 1 ? 'proyecto' : 'proyectos'}`);
+  });
+</script>

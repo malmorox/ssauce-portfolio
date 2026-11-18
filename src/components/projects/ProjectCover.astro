@@ -1,0 +1,269 @@
+---
+import type { PaletteColor, Project } from '@utils/projects';
+
+/**
+ * Portada de proyecto. Si el proyecto tiene `cover`, muestra la imagen;
+ * si no, una composición tipográfica generativa con la paleta de marca.
+ */
+interface Props {
+  project: Project;
+  size?: 'card' | 'hero' | 'tile';
+  /** Texto principal de la composición (por defecto, el título) */
+  label?: string;
+  variant?: 1 | 2 | 3;
+  /** Nombre de view-transition para el morph tarjeta → caso */
+  transitionName?: string;
+  /** Solo para imágenes de contenido (cabecera del caso) */
+  alt?: string;
+  eager?: boolean;
+}
+
+const {
+  project,
+  size = 'card',
+  label = project.title,
+  variant = project.variant,
+  transitionName,
+  alt = '',
+  eager = false,
+} = Astro.props;
+
+const PAIRS: Record<PaletteColor, { bg: string; fg: string; shape: string }> = {
+  'wild-strawberry': {
+    bg: 'var(--color-wild-strawberry)',
+    fg: 'var(--color-night)',
+    shape: 'var(--color-light-green)',
+  },
+  'light-green': {
+    bg: 'var(--color-light-green)',
+    fg: 'var(--color-deep-space-blue)',
+    shape: 'var(--color-wild-strawberry)',
+  },
+  cerulean: { bg: 'var(--color-cerulean)', fg: '#fff', shape: 'var(--color-light-green)' },
+  'deep-space-blue': {
+    bg: 'var(--color-deep-space-blue)',
+    fg: 'var(--color-light-green)',
+    shape: 'var(--color-wild-strawberry)',
+  },
+  'lavender-blush': {
+    bg: 'var(--color-lavender-blush)',
+    fg: 'var(--color-deep-space-blue)',
+    shape: 'var(--color-cerulean)',
+  },
+};
+
+const pair = PAIRS[project.color];
+const style = [
+  `--cover-bg: ${pair.bg}`,
+  `--cover-fg: ${pair.fg}`,
+  `--cover-shape: ${pair.shape}`,
+  transitionName && `view-transition-name: ${transitionName}`,
+  transitionName && 'view-transition-class: project-cover',
+]
+  .filter(Boolean)
+  .join('; ');
+
+const words = label.split(' ');
+const initial = label.trim().charAt(0);
+---
+
+<div class:list={['cover', `cover--${size}`]} data-variant={variant} style={style}>
+  {
+    project.cover ? (
+      <img
+        class="cover__img"
+        src={project.cover}
+        alt={alt}
+        loading={eager ? 'eager' : 'lazy'}
+        fetchpriority={eager ? 'high' : undefined}
+        decoding="async"
+      />
+    ) : (
+      <div class="cover__art" aria-hidden="true">
+        {variant === 1 && (
+          <>
+            <span class="cover__circle" />
+            <p class="cover__headline">
+              {words.map((w) => (
+                <span>{w}</span>
+              ))}
+            </p>
+          </>
+        )}
+        {variant === 2 && (
+          <>
+            <span class="cover__stripes" />
+            <span class="cover__initial serif-accent">{initial}</span>
+            <p class="cover__caption">{label}</p>
+          </>
+        )}
+        {variant === 3 && (
+          <>
+            <span class="cover__ring" />
+            <p class="cover__poster">{label}</p>
+          </>
+        )}
+        <span class="cover__client">{project.client.split(' · ')[0]}</span>
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .cover {
+    position: relative;
+    container-type: inline-size;
+    overflow: hidden;
+    border-radius: 1.25rem;
+    background: var(--cover-bg);
+    color: var(--cover-fg);
+    isolation: isolate;
+
+    /* Filete interior: separa la portada del fondo aunque sean del mismo color */
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      border-radius: inherit;
+      box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--cover-fg) 22%, transparent);
+      pointer-events: none;
+    }
+  }
+
+  .cover--card {
+    aspect-ratio: 4 / 3;
+  }
+  .cover--hero {
+    aspect-ratio: 16 / 9;
+    border-radius: 1.75rem;
+  }
+  .cover--tile {
+    aspect-ratio: 4 / 5;
+  }
+
+  .cover__img {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .cover__art {
+    position: absolute;
+    inset: 0;
+    transition: scale 0.6s var(--ease-out-expo);
+  }
+
+  .cover__client {
+    position: absolute;
+    inset-block-start: 5cqi;
+    inset-inline-start: 5cqi;
+    padding: 0.4em 0.8em;
+    border: 1.5px solid currentColor;
+    border-radius: 999px;
+    font-size: max(0.7rem, 2.6cqi);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* ---------- Variante 1: titular gigante recortado ---------- */
+  .cover__circle {
+    position: absolute;
+    inset-block-start: -18cqi;
+    inset-inline-end: -12cqi;
+    inline-size: 62cqi;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--cover-shape);
+    z-index: -1;
+  }
+
+  .cover__headline {
+    position: absolute;
+    inset-inline: 5cqi -4cqi;
+    inset-block-end: -2.5cqi;
+    display: flex;
+    flex-direction: column;
+    font-size: 19cqi;
+    font-weight: 800;
+    line-height: 0.82;
+    letter-spacing: -0.05em;
+    text-transform: uppercase;
+
+    span:nth-child(even) {
+      padding-inline-start: 12cqi;
+    }
+  }
+
+  /* ---------- Variante 2: inicial en serif + bandas ---------- */
+  .cover__stripes {
+    position: absolute;
+    inset-inline: 0;
+    inset-block: 40% 32%;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--cover-shape) 0 3cqi,
+      transparent 3cqi 6cqi
+    );
+    rotate: -6deg;
+    scale: 1.2;
+    z-index: -1;
+  }
+
+  .cover__initial {
+    position: absolute;
+    inset-block-start: 6cqi;
+    inset-inline-end: 6cqi;
+    font-size: 70cqi;
+    line-height: 0.75;
+  }
+
+  .cover__caption {
+    position: absolute;
+    inset-inline: 5cqi;
+    inset-block-end: 5cqi;
+    max-inline-size: 60%;
+    font-size: max(1rem, 6cqi);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  /* ---------- Variante 3: retícula de puntos + anillo ---------- */
+  .cover[data-variant='3'] .cover__art {
+    background-image: radial-gradient(
+      color-mix(in oklab, var(--cover-fg) 30%, transparent) 1.2px,
+      transparent 1.6px
+    );
+    background-size: 4cqi 4cqi;
+  }
+
+  .cover__ring {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 58%;
+    translate: -50% -50%;
+    inline-size: 70cqi;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 7cqi solid var(--cover-shape);
+    z-index: -1;
+  }
+
+  .cover__poster {
+    position: absolute;
+    inset-inline-start: 5cqi;
+    inset-block-end: 5cqi;
+    max-inline-size: 75%;
+    font-size: 10cqi;
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+</style>

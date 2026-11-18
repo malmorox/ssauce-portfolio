@@ -1,0 +1,291 @@
+---
+const path = Astro.url.pathname;
+
+const links = [
+  { href: '/#sobre-mi', label: 'Sobre mí' },
+  { href: '/#servicios', label: 'Servicios' },
+  { href: '/projects', label: 'Proyectos', current: path.startsWith('/projects') },
+  { href: '/#experiencia', label: 'Experiencia' },
+];
+---
+
+<header class="site-header" id="top">
+  <div class="header-inner wrap">
+    <a class="logo" href="/">
+      sofía sauce<span class="logo__mark" aria-hidden="true">®</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Principal">
+      <button
+        class="menu-button"
+        type="button"
+        popovertarget="site-menu"
+        popovertargetaction="toggle"
+        aria-controls="site-menu"
+      >
+        <span class="menu-icon" aria-hidden="true"></span>
+        <span>Menú</span>
+      </button>
+
+      <ul id="site-menu" class="site-menu" popover="auto">
+        {
+          links.map((link) => (
+            <li>
+              <a
+                class="site-menu__link"
+                href={link.href}
+                aria-current={link.current ? 'page' : undefined}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+        <li class="site-menu__cta">
+          <a class="btn btn--solid btn--sm" href="/#contacto">
+            Hablemos <span class="btn__arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 50;
+    view-transition-name: site-header;
+    background: color-mix(in oklab, var(--paper) 82%, transparent);
+    backdrop-filter: blur(14px);
+    border-block-end: 1px solid var(--line);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-block-size: 4.25rem;
+
+    /* Mantiene medible el ancho natural de la fila */
+    > * {
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+  }
+
+  .logo {
+    font-size: var(--text-lead);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    text-decoration: none;
+  }
+
+  .logo__mark {
+    display: inline-block;
+    margin-inline-start: 0.1em;
+    font-size: 0.55em;
+    vertical-align: super;
+    color: var(--ink-soft);
+    transition: rotate 0.6s var(--ease-out-back);
+  }
+
+  .logo:hover .logo__mark {
+    @media (prefers-reduced-motion: no-preference) {
+      rotate: 360deg;
+    }
+  }
+
+  /* ---------- Botón de menú (layout estrecho) ---------- */
+  .menu-button {
+    anchor-name: --menu-button;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-block-size: 2.75rem;
+    padding: 0.5rem 1.1rem;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .menu-icon {
+    position: relative;
+    inline-size: 1.1rem;
+    block-size: 2px;
+    background: currentColor;
+    box-shadow: 0 -5px 0 currentColor, 0 5px 0 currentColor;
+  }
+
+  /* ---------- Menú en popover (layout estrecho, por defecto) ---------- */
+  .site-header:not(.is-wide) .site-menu {
+    --paper: var(--inverse-paper);
+    --ink: var(--inverse-ink);
+    position: fixed;
+    inset: auto;
+    /* Sin anchor positioning se queda con este valor */
+    inset-block-start: 4.75rem;
+    inset-block-start: anchor(--menu-button bottom);
+    inset-inline-end: max(1rem, 4vw);
+    inline-size: min(85dvw, 22rem);
+    max-inline-size: calc(100dvw - 2rem);
+    block-size: fit-content;
+    max-block-size: calc(100dvh - 6rem);
+    margin: 0.5rem 0 0;
+    padding: 0.75rem;
+    overflow: auto;
+    border: 0;
+    border-radius: 1.25rem;
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: 8px 8px 0 var(--accent);
+
+    opacity: 0;
+    transition-property: opacity, translate, display, overlay;
+    transition-duration: 0.25s;
+    transition-timing-function: var(--ease-out-expo);
+    transition-behavior: allow-discrete;
+
+    @media (prefers-reduced-motion: no-preference) {
+      translate: 0 -0.5rem;
+    }
+
+    &:is(:popover-open, .\:popover-open) {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      opacity: 1;
+      translate: 0 0;
+
+      @starting-style {
+        opacity: 0;
+        @media (prefers-reduced-motion: no-preference) {
+          translate: 0 -0.5rem;
+        }
+      }
+    }
+
+    .site-menu__link {
+      display: block;
+      padding: 0.75rem 1rem;
+      border-radius: 0.75rem;
+      font-size: var(--text-title);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      text-decoration: none;
+
+      &:hover {
+        background: color-mix(in oklab, var(--ink) 10%, transparent);
+      }
+    }
+
+    .site-menu__cta {
+      margin-block-start: 0.5rem;
+
+      .btn {
+        inline-size: 100%;
+        font-size: var(--text-body);
+      }
+    }
+  }
+
+  /* ---------- Navegación en línea (cuando cabe) ---------- */
+  .site-header.is-wide {
+    .menu-button {
+      display: none;
+    }
+
+    .site-menu {
+      position: static;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      overflow: visible;
+    }
+
+    .site-menu::backdrop {
+      display: none;
+    }
+
+    .site-menu__link {
+      display: block;
+      padding: 0.5rem 0.9rem;
+      border-radius: 999px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background: var(--paper-2);
+      }
+    }
+
+    .site-menu__cta {
+      margin-inline-start: 0.75rem;
+    }
+  }
+
+  /* Página actual: no solo color, también subrayado */
+  .site-menu__link[aria-current='page'] {
+    text-decoration: underline;
+    text-decoration-thickness: 0.15em;
+    text-underline-offset: 0.3em;
+    text-decoration-color: var(--accent);
+
+    @media (forced-colors: active) {
+      text-decoration-color: LinkText;
+    }
+  }
+
+  .site-header.is-measuring * {
+    transition: none !important;
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('.site-header');
+  const inner = header?.querySelector<HTMLElement>('.header-inner');
+  const menu = header?.querySelector<HTMLElement>('#site-menu');
+
+  if (header && inner && menu) {
+    let lastWidth = 0;
+
+    const update = () => {
+      const width = header.clientWidth;
+      const wasWide = header.classList.contains('is-wide');
+      // En modo plegado solo remedimos si la cabecera ha crecido (evita parpadeos)
+      if (!wasWide && width <= lastWidth) return;
+      lastWidth = width;
+
+      header.classList.add('is-measuring', 'is-wide');
+      const fits = inner.scrollWidth <= inner.clientWidth;
+
+      if (fits) {
+        menu.removeAttribute('popover');
+      } else {
+        header.classList.remove('is-wide');
+        if (!menu.hasAttribute('popover')) menu.setAttribute('popover', 'auto');
+      }
+      requestAnimationFrame(() => header.classList.remove('is-measuring'));
+    };
+
+    const ro = new ResizeObserver(update);
+    ro.observe(header);
+    ro.observe(menu);
+
+    // Cerrar el menú al elegir un enlace (los anclajes no navegan de página)
+    menu.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a') && menu.hasAttribute('popover')) {
+        menu.hidePopover();
+      }
+    });
+  }
+</script>

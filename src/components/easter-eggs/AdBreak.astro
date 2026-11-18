@@ -1,0 +1,203 @@
+---
+/** Easter egg: «No pulsar» abre una pausa publicitaria con su anuncio. */
+const SKIP_SECONDS = 5;
+---
+
+<dialog class="ad-break" id="ad-break" aria-labelledby="ad-break-title">
+  <div class="ad-break__screen">
+    <p class="ad-break__badge">
+      <span class="ad-break__rec" aria-hidden="true"></span>
+      Pausa publicitaria
+    </p>
+    <h2 id="ad-break-title" class="sr-only">Pausa publicitaria</h2>
+
+    <div class="ad-break__spot">
+      <p class="ad-break__line">¿Te aburren los anuncios que nadie recuerda?</p>
+      <p class="ad-break__line ad-break__line--big serif-accent">A mí también.</p>
+      <p class="ad-break__line">
+        <strong>Sofía Sauce.</strong> Publicidad con salsa.
+      </p>
+    </div>
+
+    <p class="ad-break__legal">
+      *Ningún cliente fue aburrido durante la grabación de este anuncio.
+    </p>
+  </div>
+
+  <form method="dialog" class="ad-break__controls">
+    <a class="btn btn--sm ad-break__cta" href="/#contacto">Quiero uno así</a>
+    <button class="btn btn--solid btn--sm ad-break__skip" value="skip" autofocus data-seconds={SKIP_SECONDS}>
+      <span data-skip-label>Saltar anuncio en {SKIP_SECONDS}</span>
+      <span aria-hidden="true">⏭</span>
+    </button>
+  </form>
+</dialog>
+
+<style>
+  .ad-break__screen {
+    position: relative;
+    padding: clamp(1.5rem, 1rem + 3vw, 3rem);
+    padding-block-end: 1.5rem;
+    overflow: hidden;
+
+    /* Líneas de barrido de tele antigua (estáticas: nada parpadea) */
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0 3px,
+        rgb(255 255 255 / 0.035) 3px 4px
+      );
+    }
+  }
+
+  .ad-break__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.8rem;
+    border-radius: 999px;
+    background: var(--color-wild-strawberry);
+    color: var(--color-night);
+    font-size: var(--text-caption);
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .ad-break__rec {
+    inline-size: 0.55rem;
+    block-size: 0.55rem;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .ad-break__spot {
+    display: grid;
+    gap: 1rem;
+    margin-block: 2.5rem 2rem;
+  }
+
+  .ad-break__line {
+    font-size: var(--text-title);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+
+    strong {
+      color: var(--color-light-green);
+    }
+  }
+
+  .ad-break__line--big {
+    font-size: var(--text-mega);
+    line-height: 1;
+    color: var(--color-wild-strawberry);
+  }
+
+  /* El "spot": cada frase entra a su tiempo */
+  @media (prefers-reduced-motion: no-preference) {
+    .ad-break[open] .ad-break__line {
+      animation: spot-in 0.6s var(--ease-out-expo) both;
+      animation-delay: calc(var(--i) * 1.1s + 0.3s);
+    }
+    .ad-break__line:nth-child(1) { --i: 0; }
+    .ad-break__line:nth-child(2) { --i: 1; }
+    .ad-break__line:nth-child(3) { --i: 2; }
+  }
+
+  @keyframes spot-in {
+    from {
+      opacity: 0;
+      translate: 0 1rem;
+    }
+  }
+
+  .ad-break__legal {
+    font-size: var(--text-caption);
+    color: color-mix(in oklab, var(--color-lavender-blush) 75%, var(--color-night));
+  }
+
+  .ad-break__controls {
+    --paper: var(--color-night);
+    --ink: var(--color-lavender-blush);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding: 1rem clamp(1.5rem, 1rem + 3vw, 3rem) 1.5rem;
+    border-block-start: 1px solid rgb(255 255 255 / 0.12);
+  }
+
+  .ad-break__skip[data-waiting] {
+    opacity: 0.85;
+  }
+</style>
+
+<script>
+  import { unlock } from '../../scripts/secrets';
+  import { closeTopLayer } from '../../scripts/top-layer';
+
+  const dialog = document.querySelector<HTMLDialogElement>('#ad-break');
+  const skip = dialog?.querySelector<HTMLButtonElement>('.ad-break__skip');
+  const label = skip?.querySelector<HTMLElement>('[data-skip-label]');
+
+  if (dialog && skip && label) {
+    const total = Number(skip.dataset.seconds ?? 5);
+    let remaining = 0;
+    let timer: number | undefined;
+
+    const renderLabel = (text?: string) => {
+      label.textContent = text ?? (remaining > 0 ? `Saltar anuncio en ${remaining}` : 'Saltar anuncio');
+    };
+
+    const open = () => {
+      remaining = total;
+      skip.setAttribute('data-waiting', '');
+      renderLabel();
+      dialog.showModal();
+      unlock('anuncio');
+
+      clearInterval(timer);
+      timer = window.setInterval(() => {
+        remaining -= 1;
+        renderLabel();
+        if (remaining <= 0) {
+          clearInterval(timer);
+          skip.removeAttribute('data-waiting');
+        }
+      }, 1000);
+    };
+
+    document.querySelectorAll('[data-adbreak-open]').forEach((button) => {
+      button.addEventListener('click', open);
+    });
+
+    // Antes de tiempo, «Saltar» no salta (Esc sí cierra siempre)
+    skip.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (remaining > 0) {
+        renderLabel(`Paciencia… ${remaining}`);
+        return;
+      }
+      closeTopLayer(dialog);
+    });
+
+    // El CTA lleva a contacto: cerramos antes para que la página no siga inerte
+    dialog.querySelector('.ad-break__cta')?.addEventListener('click', () => dialog.close());
+
+    // Cierre animado también con Esc
+    dialog.addEventListener('cancel', (e) => {
+      e.preventDefault();
+      closeTopLayer(dialog);
+    });
+
+    dialog.addEventListener('close', () => {
+      clearInterval(timer);
+      dialog.returnValue = '';
+    });
+  }
+</script>

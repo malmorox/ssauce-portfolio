@@ -1,0 +1,76 @@
+{
+  "name": "Sofía Sauce",
+  "roles": ["Publicista", "Creativa", "Estratega"],
+  "claim": "Convierto briefs en ideas que la gente quiere compartir.",
+  "intro": "Estrategia, concepto y copy para marcas que prefieren que las recuerden a que las vean.",
+  "location": "España",
+  "availability": {
+    "open": true,
+    "label": "Disponible para nuevos proyectos"
+  },
+  "email": "hola@ejemplo.com",
+  "cv": "/cv/cv-sofia-sauce.pdf",
+  "socials": [
+    { "label": "LinkedIn", "url": "https://www.linkedin.com/" },
+    { "label": "Instagram", "url": "https://www.instagram.com/" },
+    { "label": "Behance", "url": "https://www.behance.net/" }
+  ],
+  "photo": null,
+  "about": {
+    "manifesto": ["No hago anuncios.", "Hago ideas", "que se quedan."],
+    "bio": [
+      "Soy Sofía, publicista. Me paso el día buscando ese insight que hace que alguien pare el scroll, sonría y se acuerde de una marca al día siguiente.",
+      "Trabajo entre la estrategia y la creatividad: me gusta entender el negocio antes de escribir una sola línea, y escribir cada línea como si fuera la única que se va a leer."
+    ],
+    "stats": [
+      { "value": "+30", "label": "campañas lanzadas" },
+      { "value": "+15", "label": "marcas acompañadas" },
+      { "value": "∞", "label": "cafés por brief" }
+    ]
+  },
+  "disciplines": [
+    "Estrategia de marca",
+    "Campañas 360",
+    "Branding",
+    "Copywriting",
+    "Redes sociales",
+    "Naming",
+    "Contenido",
+    "Dirección creativa"
+  ],
+  "services": [
+    {
+      "title": "Estrategia",
+      "description": "Antes de la idea, el porqué. Investigo, encuentro el insight y defino qué tiene que decir la marca (y qué no).",
+      "items": ["Insights", "Posicionamiento", "Plan de comunicación"]
+    },
+    {
+      "title": "Concepto creativo",
+      "description": "La gran idea que lo ordena todo y que funciona igual en una valla que en un story de quince segundos.",
+      "items": ["Big idea", "Campañas 360", "Activaciones"]
+    },
+    {
+      "title": "Copywriting",
+      "description": "Titulares que se recuerdan, claims que se repiten y un tono de voz que suena a alguien, no a algo.",
+      "items": ["Claims y titulares", "Naming", "Tono de voz"]
+    },
+    {
+      "title": "Social & contenido",
+      "description": "Ideas pensadas para el feed: formatos nativos, calendario con sentido y comunidad, no solo alcance.",
+      "items": ["Estrategia social", "Formatos nativos", "Calendarios"]
+    }
+  ],
+  "tools": [
+    "Photoshop",
+    "Illustrator",
+    "InDesign",
+    "Premiere Pro",
+    "After Effects",
+    "Figma",
+    "Canva",
+    "CapCut",
+    "Meta Business Suite",
+    "Google Ads",
+    "Notion"
+  ]
+}

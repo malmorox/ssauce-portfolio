@@ -1,0 +1,15 @@
+---
+/** Etiqueta de sección: «(02) El insight». El portfolio se lee como una campaña. */
+interface Props {
+  number: string;
+  label: string;
+  class?: string;
+}
+
+const { number, label, class: className } = Astro.props;
+---
+
+<p class:list={['section-label', className]}>
+  <span class="section-label__num">({number})</span>
+  <span>{label}</span>
+</p>

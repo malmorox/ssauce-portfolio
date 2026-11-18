@@ -1,0 +1,144 @@
+---
+/**
+ * Cinta en movimiento con pausa visible (WCAG 2.2.2).
+ * Con reduced motion no se mueve: se muestra estática y en varias líneas.
+ */
+interface Props {
+  items: string[];
+  label: string;
+}
+const { items, label } = Astro.props;
+---
+
+<div class="marquee-clip">
+<section class="marquee surface-inverse" aria-label={label}>
+  <div class="marquee__viewport">
+    <div class="marquee__track">
+      <ul class="marquee__group">
+        {items.map((item) => <li>{item}</li>)}
+      </ul>
+      <ul class="marquee__group" aria-hidden="true">
+        {items.map((item) => <li>{item}</li>)}
+      </ul>
+    </div>
+  </div>
+  <button class="marquee__toggle" type="button" data-label-pause="Pausar" data-label-play="Reanudar">
+    Pausar
+  </button>
+</section>
+</div>
+
+<style>
+  /* La cinta está girada y es más ancha que la pantalla: recortamos aquí */
+  .marquee-clip {
+    overflow-x: clip;
+    padding-block: 1.5rem;
+    margin-block: -1.5rem;
+  }
+
+  .marquee {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-inline: -2rem;
+    padding-block: 1.1rem;
+    padding-inline-end: calc(2rem + max(1rem, 4vw));
+    rotate: -2deg;
+    border-block: 2px solid var(--ink);
+  }
+
+  .marquee__viewport {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+  }
+
+  .marquee__track {
+    display: flex;
+    inline-size: max-content;
+  }
+
+  .marquee__group {
+    display: flex;
+    flex-shrink: 0;
+
+    li {
+      display: flex;
+      align-items: center;
+      padding-inline: 1.25rem;
+      font-size: var(--text-title);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: var(--accent-text);
+
+      &::after {
+        content: '✺';
+        margin-inline-start: 2.5rem;
+        color: var(--accent);
+      }
+    }
+  }
+
+  .marquee__toggle {
+    flex-shrink: 0;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    font-size: var(--text-caption);
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+      background: color-mix(in oklab, var(--ink) 12%, transparent);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .marquee__track {
+      animation: marquee 38s linear infinite;
+    }
+
+    .marquee[data-paused] .marquee__track,
+    .marquee__viewport:hover .marquee__track {
+      animation-play-state: paused;
+    }
+  }
+
+  /* Sin movimiento: lista estática y sin botón de pausa */
+  @media (prefers-reduced-motion: reduce) {
+    .marquee {
+      padding-inline-start: calc(2rem + max(1rem, 4vw));
+    }
+    .marquee__track {
+      inline-size: auto;
+    }
+    .marquee__group {
+      flex-wrap: wrap;
+      flex-shrink: 1;
+      row-gap: 0.5rem;
+    }
+    .marquee__group[aria-hidden='true'],
+    .marquee__toggle {
+      display: none;
+    }
+  }
+
+  @keyframes marquee {
+    to {
+      translate: -50% 0;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.marquee').forEach((marquee) => {
+    const toggle = marquee.querySelector<HTMLButtonElement>('.marquee__toggle');
+    toggle?.addEventListener('click', () => {
+      const paused = marquee.toggleAttribute('data-paused');
+      toggle.textContent = paused ? toggle.dataset.labelPlay! : toggle.dataset.labelPause!;
+    });
+  });
+</script>

@@ -1,1 +1,135 @@
-[]
+[
+  {
+    "slug": "verano-sin-filtro",
+    "title": "Verano sin filtro",
+    "client": "Solea · protección solar",
+    "year": 2025,
+    "category": "campaign",
+    "role": "Concepto y copy",
+    "disciplines": ["Campaña 360", "Spot", "Exterior"],
+    "summary": "Una campaña que cambió el «ponte crema» de las madres por el orgullo de llegar a septiembre con la piel intacta.",
+    "challenge": "La protección solar se percibe como una obligación aburrida. Había que conseguir que la generación Z la viera como parte de su estilo, no como un sermón.",
+    "idea": "Si el verano ya no se edita, la piel tampoco. «Verano sin filtro» celebra la piel real y convierte el protector en el único filtro que vale la pena llevar.",
+    "deliverables": ["Spot 20''", "Gráfica exterior", "Social ads"],
+    "results": [
+      { "value": "+42%", "label": "recuerdo de marca" },
+      { "value": "3,1M", "label": "visualizaciones" },
+      { "value": "x2", "label": "ventas en julio" }
+    ],
+    "color": "wild-strawberry",
+    "variant": 1,
+    "cover": null,
+    "images": [],
+    "featured": true
+  },
+  {
+    "slug": "la-vuelta-al-barrio",
+    "title": "La vuelta al barrio",
+    "client": "Horno Ruiz · panadería",
+    "year": 2025,
+    "category": "branding",
+    "role": "Estrategia y naming",
+    "disciplines": ["Branding", "Tono de voz", "Packaging"],
+    "summary": "Rebranding de una panadería de toda la vida que quería competir con las cadenas sin dejar de ser la del barrio.",
+    "challenge": "Modernizar la marca sin perder a la clientela de siempre ni parecer una franquicia más.",
+    "idea": "El pan como excusa para encontrarse. Una identidad que habla como la dueña: cercana, con retranca y con olor a horno a las siete de la mañana.",
+    "deliverables": ["Identidad", "Packaging", "Escaparate"],
+    "results": [
+      { "value": "+28%", "label": "clientes nuevos" },
+      { "value": "2", "label": "locales nuevos" }
+    ],
+    "color": "light-green",
+    "variant": 2,
+    "cover": null,
+    "images": [],
+    "featured": true
+  },
+  {
+    "slug": "menos-scroll-mas-plan",
+    "title": "Menos scroll, más plan",
+    "client": "Quedamos · app de planes",
+    "year": 2024,
+    "category": "social",
+    "role": "Estrategia social y contenido",
+    "disciplines": ["Social media", "Contenido", "Influencia"],
+    "summary": "Una app que te pide que dejes de usar el móvil. Contradictorio, sí. Efectivo, también.",
+    "challenge": "Destacar en redes sociales siendo una app cuyo propósito es que pases menos tiempo en ellas.",
+    "idea": "Abrazar la contradicción: contenido que interrumpe el scroll para recordarte que fuera hay un plan esperándote.",
+    "deliverables": ["Serie de reels", "Filtro AR", "Campaña con creadores"],
+    "results": [
+      { "value": "+120K", "label": "descargas" },
+      { "value": "8,4%", "label": "engagement medio" }
+    ],
+    "color": "cerulean",
+    "variant": 3,
+    "cover": null,
+    "images": [],
+    "featured": true
+  },
+  {
+    "slug": "palabras-con-sabor",
+    "title": "Palabras con sabor",
+    "client": "Brava · salsas picantes",
+    "year": 2024,
+    "category": "copy",
+    "role": "Copywriting",
+    "disciplines": ["Copywriting", "Naming", "Packaging"],
+    "summary": "Naming y textos de packaging para una gama de salsas picantes con más personalidad que escoville.",
+    "challenge": "Diferenciar cinco salsas en un lineal saturado, sin presupuesto de medios.",
+    "idea": "Que el bote hable. Cada salsa tiene nombre, carácter y un texto que se lee como una amenaza cariñosa.",
+    "deliverables": ["Naming", "Textos de packaging", "Web"],
+    "results": [
+      { "value": "5", "label": "nombres registrados" },
+      { "value": "Top 3", "label": "en su categoría" }
+    ],
+    "color": "deep-space-blue",
+    "variant": 1,
+    "cover": null,
+    "images": [],
+    "featured": true
+  },
+  {
+    "slug": "la-ciudad-suena",
+    "title": "La ciudad suena",
+    "client": "Eco Fest · festival de música",
+    "year": 2023,
+    "category": "campaign",
+    "role": "Concepto creativo",
+    "disciplines": ["Exterior", "Activación", "Social media"],
+    "summary": "Una campaña de exterior que convertía las paradas de autobús en altavoces del cartel del festival.",
+    "challenge": "Anunciar un festival nuevo en una ciudad que ya tiene demasiados.",
+    "idea": "Si el festival es de la ciudad, que la ciudad lo cante. Marquesinas con códigos QR que reproducían el cartel con los sonidos del barrio.",
+    "deliverables": ["Marquesinas", "Activación de calle", "Social"],
+    "results": [
+      { "value": "Sold out", "label": "en 3 semanas" },
+      { "value": "+60K", "label": "escaneos QR" }
+    ],
+    "color": "lavender-blush",
+    "variant": 2,
+    "cover": null,
+    "images": [],
+    "featured": false
+  },
+  {
+    "slug": "tu-banco-sin-corbata",
+    "title": "Tu banco, sin corbata",
+    "client": "Moneda · banca digital",
+    "year": 2023,
+    "category": "copy",
+    "role": "Tono de voz",
+    "disciplines": ["Tono de voz", "UX writing", "Guía de marca"],
+    "summary": "Un manual de tono de voz para que un banco dejara de hablar como un banco.",
+    "challenge": "Hacer comprensible la letra pequeña sin perder la confianza que se espera de una entidad financiera.",
+    "idea": "Hablar de dinero como hablarías con una amiga que sabe de dinero: claro, honesto y sin asteriscos.",
+    "deliverables": ["Guía de tono", "Microcopy de la app", "Formación"],
+    "results": [
+      { "value": "-35%", "label": "llamadas a soporte" },
+      { "value": "4,8★", "label": "valoración en tiendas" }
+    ],
+    "color": "wild-strawberry",
+    "variant": 3,
+    "cover": null,
+    "images": [],
+    "featured": false
+  }
+]

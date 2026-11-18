@@ -1,1 +1,7 @@
 @import "tailwindcss";
+
+/* Orden: tokens → base → componentes → capas superiores y motion */
+@import "./theme.css";
+@import "./base.css";
+@import "./components.css";
+@import "./overlays.css";

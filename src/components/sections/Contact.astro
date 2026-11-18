@@ -1,0 +1,111 @@
+---
+import Lockup from '@components/ui/Lockup.astro';
+import SectionLabel from '@components/ui/SectionLabel.astro';
+import profile from '@data/profile.json';
+---
+
+<section class="section contact surface-inverse" id="contacto" aria-labelledby="contact-title">
+  <div class="wrap">
+    <SectionLabel number="06" label="El call to action" />
+
+    <Lockup
+      as="h2"
+      id="contact-title"
+      class="contact__lockup"
+      lines={['¿Tienes un brief?', { text: 'Hablemos.', serif: true, class: 'contact__accent' }]}
+    />
+
+    <div class="contact__grid">
+      <div class="contact__mail">
+        <p class="contact__kicker">Escríbeme a</p>
+        <a class="contact__email link-fancy" href={`mailto:${profile.email}`}>{profile.email}</a>
+        <button class="btn btn--sm contact__copy" type="button" data-copy={profile.email}>
+          Copiar email
+        </button>
+      </div>
+
+      <div>
+        <p class="contact__kicker">O búscame en</p>
+        <ul class="contact__socials">
+          {
+            profile.socials.map((social) => (
+              <li>
+                <a class="link-fancy" href={social.url} rel="noopener noreferrer">
+                  {social.label} <span aria-hidden="true">↗</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact {
+    border-block-end: 1px solid var(--line);
+  }
+
+  .contact :global(.contact__lockup) {
+    margin-block: clamp(2.5rem, 2rem + 3vw, 4.5rem);
+  }
+
+  .contact :global(.contact__accent) {
+    color: var(--accent-text);
+  }
+
+  .contact__grid {
+    display: grid;
+    gap: 3rem;
+
+    @media (min-width: 52rem) {
+      grid-template-columns: 1.6fr 1fr;
+      align-items: start;
+    }
+  }
+
+  .contact__kicker {
+    font-size: var(--text-caption);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .contact__mail {
+    display: grid;
+    justify-items: start;
+    gap: 1rem;
+  }
+
+  .contact__email {
+    font-size: var(--text-display);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+  }
+
+  .contact__socials {
+    display: grid;
+    gap: 0.5rem;
+    margin-block-start: 1rem;
+    font-size: var(--text-title);
+    font-weight: 700;
+  }
+</style>
+
+<script>
+  import { toast } from '../../scripts/toast';
+
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((button) => {
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(button.dataset.copy ?? '');
+        toast({ title: 'Email copiado', body: 'Ahora te toca a ti. Te leo 😉' });
+      } catch {
+        toast({ title: 'No he podido copiarlo', body: 'Selecciona el email y cópialo a mano.' });
+      }
+    });
+  });
+</script>

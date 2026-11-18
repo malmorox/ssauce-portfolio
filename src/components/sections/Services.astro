@@ -1,0 +1,159 @@
+---
+import SectionLabel from '@components/ui/SectionLabel.astro';
+import profile from '@data/profile.json';
+
+// Cada tarjeta se "entinta" con un color distinto al pasar por encima
+const TINTS = ['accent', 'pop', 'cool', 'ink'] as const;
+---
+
+<section class="section services" id="servicios" aria-labelledby="services-title">
+  <div class="wrap">
+    <SectionLabel number="03" label="La propuesta" />
+
+    <div class="services__head">
+      <h2 id="services-title" class="services__title">
+        Qué hago <span class="serif-accent">(y por qué funciona)</span>
+      </h2>
+      <p class="services__intro">
+        Del insight a la pieza final. Puedo encargarme de todo el proceso o sumarme a tu equipo
+        justo donde haga falta.
+      </p>
+    </div>
+
+    <ol class="services__grid">
+      {
+        profile.services.map((service, i) => (
+          <li class="service reveal" data-tint={TINTS[i % TINTS.length]}>
+            <span class="service__num" aria-hidden="true">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <h3 class="service__title">{service.title}</h3>
+            <p class="service__desc">{service.description}</p>
+            <ul class="service__items">
+              {service.items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .services__head {
+    display: grid;
+    gap: 1.5rem;
+    margin-block: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+
+    @media (min-width: 56rem) {
+      grid-template-columns: 1.4fr 1fr;
+      align-items: end;
+    }
+  }
+
+  .services__title {
+    font-size: var(--text-mega);
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+
+    .serif-accent {
+      display: block;
+      font-size: 0.6em;
+      color: var(--accent-text);
+    }
+  }
+
+  .services__intro {
+    max-inline-size: 40ch;
+    font-size: var(--text-lead);
+    color: var(--ink-soft);
+  }
+
+  .services__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: 1rem;
+  }
+
+  .service {
+    --tint-bg: var(--accent);
+    --tint-fg: var(--on-accent);
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: 1rem;
+    padding: clamp(1.5rem, 1rem + 1.5vw, 2.25rem);
+    border: 2px solid var(--ink);
+    border-radius: 1.5rem;
+    background: var(--paper);
+    transition:
+      background-color 0.35s,
+      color 0.35s,
+      translate 0.35s var(--ease-out-back),
+      box-shadow 0.35s;
+
+    &[data-tint='pop'] {
+      --tint-bg: var(--pop);
+      --tint-fg: var(--on-pop);
+    }
+    &[data-tint='cool'] {
+      --tint-bg: var(--cool);
+      --tint-fg: var(--on-cool);
+    }
+    &[data-tint='ink'] {
+      --tint-bg: var(--ink);
+      --tint-fg: var(--paper);
+    }
+
+    &:hover {
+      background: var(--tint-bg);
+      color: var(--tint-fg);
+      box-shadow: 6px 6px 0 var(--ink);
+
+      @media (prefers-reduced-motion: no-preference) {
+        translate: -3px -3px;
+      }
+
+      .service__desc {
+        color: inherit;
+      }
+      .service__items li {
+        border-color: currentColor;
+      }
+    }
+  }
+
+  .service__num {
+    font-size: var(--text-display);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .service__title {
+    font-size: var(--text-title);
+  }
+
+  .service__desc {
+    color: var(--ink-soft);
+    transition: color 0.35s;
+  }
+
+  .service__items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-block-start: 0.5rem;
+
+    li {
+      padding: 0.25em 0.7em;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      font-size: var(--text-caption);
+      font-weight: 500;
+    }
+  }
+</style>

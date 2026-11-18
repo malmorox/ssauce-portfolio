@@ -1,0 +1,134 @@
+---
+import SectionLabel from '@components/ui/SectionLabel.astro';
+import experience from '@data/experience.json';
+import profile from '@data/profile.json';
+---
+
+<section class="section experience" id="experiencia" aria-labelledby="experience-title">
+  <div class="wrap">
+    <SectionLabel number="05" label="La trayectoria" />
+
+    <div class="experience__head">
+      <h2 id="experience-title" class="experience__title">
+        Experiencia <span class="serif-accent">(hasta ahora)</span>
+      </h2>
+      {
+        profile.cv && (
+          <a class="btn" href={profile.cv} download>
+            Descargar CV <span class="btn__arrow" aria-hidden="true">↓</span>
+          </a>
+        )
+      }
+    </div>
+
+    <ol class="timeline">
+      {
+        experience.map((job) => (
+          <li class="timeline__item reveal">
+            <p class="timeline__period">
+              <time datetime={job.start}>{job.start}</time>
+              <span aria-hidden="true"> — </span>
+              <span class="sr-only"> a </span>
+              {job.end ? <time datetime={job.end}>{job.end}</time> : <span>Hoy</span>}
+            </p>
+            <div class="timeline__role">
+              <h3>{job.role}</h3>
+              <p>
+                {job.company} · {job.location}
+              </p>
+            </div>
+            <p class="timeline__desc">{job.description}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .experience__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-block: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+  }
+
+  .experience__title {
+    font-size: var(--text-mega);
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+
+    .serif-accent {
+      display: block;
+      font-size: 0.6em;
+      color: var(--accent-text);
+    }
+  }
+
+  .timeline {
+    border-block-start: 2px solid var(--ink);
+  }
+
+  .timeline__item {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    gap: 0.5rem 2rem;
+    padding: clamp(1.25rem, 1rem + 1vw, 2rem) 0.5rem;
+    border-block-end: 1px solid var(--line-strong);
+
+    @media (min-width: 52rem) {
+      grid-template-columns: 10rem 1.2fr 1.5fr;
+      align-items: baseline;
+    }
+
+    /* Barrido de color al pasar por encima */
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: var(--pop);
+      transform-origin: 0 50%;
+      scale: 0 1;
+      transition: scale 0.45s var(--ease-out-expo);
+    }
+
+    &:hover {
+      color: var(--on-pop);
+
+      &::before {
+        scale: 1 1;
+      }
+
+      .timeline__role p,
+      .timeline__desc,
+      .timeline__period {
+        color: inherit;
+      }
+    }
+  }
+
+  .timeline__period {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-soft);
+  }
+
+  .timeline__role {
+    h3 {
+      font-size: var(--text-title);
+    }
+    p {
+      margin-block-start: 0.25rem;
+      color: var(--ink-soft);
+    }
+  }
+
+  .timeline__desc {
+    max-inline-size: 55ch;
+    color: var(--ink-soft);
+  }
+</style>

@@ -1,0 +1,121 @@
+---
+/**
+ * Sello circular. Gira con el scroll (no solo, así no hay animación
+ * automática que pausar). Easter egg: púlsalo 3 veces.
+ */
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+
+const TEXT = 'Ideas con salsa ✺ Publicidad ✺ Estrategia ✺ ';
+const ALT_TEXT = '¿Nos tomamos un café? ✺ ¿Un café? ✺ ';
+---
+
+<button
+  class:list={['stamp', className]}
+  type="button"
+  aria-label="Sello: ideas con salsa"
+  data-alt-text={ALT_TEXT}
+>
+  <svg class="stamp__ring" viewBox="0 0 200 200" aria-hidden="true">
+    <defs>
+      <path id="stamp-path" d="M100,100 m-76,0 a76,76 0 1,1 152,0 a76,76 0 1,1 -152,0"></path>
+    </defs>
+    <circle cx="100" cy="100" r="98" class="stamp__bg"></circle>
+    <text class="stamp__text">
+      <textPath href="#stamp-path" textLength="470" lengthAdjust="spacing">{TEXT}</textPath>
+    </text>
+  </svg>
+  <span class="stamp__center" aria-hidden="true">✺</span>
+</button>
+
+<style>
+  .stamp {
+    position: relative;
+    display: grid;
+    place-items: center;
+    inline-size: clamp(7rem, 5rem + 8vw, 10rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .stamp__ring {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: visible;
+  }
+
+  .stamp__bg {
+    fill: var(--pop);
+    stroke: var(--on-pop);
+    stroke-width: 2;
+  }
+
+  .stamp__text {
+    fill: var(--on-pop);
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .stamp__center {
+    position: relative;
+    font-size: clamp(1.75rem, 1.25rem + 1.5vw, 2.5rem);
+    color: var(--on-pop);
+    transition: rotate 0.6s var(--ease-out-back);
+  }
+
+  .stamp:hover .stamp__center {
+    @media (prefers-reduced-motion: no-preference) {
+      rotate: 90deg;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: scroll()) {
+      .stamp__ring {
+        animation: stamp-spin linear both;
+        animation-timeline: scroll(root);
+      }
+    }
+  }
+
+  @keyframes stamp-spin {
+    to {
+      rotate: 1turn;
+    }
+  }
+</style>
+
+<script>
+  import { unlock } from '../../scripts/secrets';
+  import { prefersReducedMotion } from '../../scripts/announce';
+
+  document.querySelectorAll<HTMLButtonElement>('.stamp').forEach((stamp) => {
+    let clicks = 0;
+
+    stamp.addEventListener('click', () => {
+      clicks += 1;
+
+      if (!prefersReducedMotion()) {
+        stamp.animate(
+          { transform: ['rotate(0turn)', `rotate(${clicks >= 3 ? 3 : 1}turn)`] },
+          { duration: clicks >= 3 ? 1400 : 700, easing: 'cubic-bezier(.34,1.56,.64,1)' },
+        );
+      }
+
+      if (clicks === 3) {
+        const textPath = stamp.querySelector('textPath');
+        if (textPath && stamp.dataset.altText) textPath.textContent = stamp.dataset.altText;
+        stamp.setAttribute('aria-label', 'Sello: ¿nos tomamos un café?');
+        unlock('sello');
+      }
+    });
+  });
+</script>

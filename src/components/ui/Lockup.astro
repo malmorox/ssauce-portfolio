@@ -1,0 +1,45 @@
+---
+/**
+ * Titular tipo póster: cada línea crece hasta ocupar todo el ancho.
+ * Las líneas cortas salen enormes, así que elige líneas de longitud
+ * variada y deja cortas las palabras que quieras enfatizar.
+ *
+ * <Lockup as="h2" lines={['¿Tienes un brief?', { text: 'Hablemos.', serif: true }]} />
+ */
+type Line = string | { text: string; serif?: boolean; class?: string };
+
+interface Props {
+  lines: Line[];
+  as?: 'h1' | 'h2' | 'h3' | 'p';
+  id?: string;
+  class?: string;
+  /** Tamaño base antes de crecer, p. ej. "clamp(2.5rem, 1.5rem + 5vw, 6rem)" */
+  base?: string;
+}
+
+const { lines, as: Tag = 'h2', id, class: className, base } = Astro.props;
+
+const normalized = lines.map((line) => (typeof line === 'string' ? { text: line } : line));
+
+// Estimación del ancho (en em) de la línea más larga: limita el tamaño base
+// para que ninguna línea desborde aunque se amplíe la fuente del sistema.
+const longest = Math.max(...normalized.map((l) => l.text.length * (l.serif ? 0.48 : 0.66)));
+const style = [`--lockup-em: ${longest.toFixed(2)}`, base && `--lockup-base: ${base}`]
+  .filter(Boolean)
+  .join('; ');
+---
+
+<div class:list={['lockup-wrap', className]}>
+  <Tag class="lockup" id={id} style={style}>
+    {
+      normalized.map((line) => (
+        <>
+          <span class:list={[line.serif && 'serif-accent', line.class]}>{line.text}</span>{' '}
+        </>
+      ))
+    }
+  </Tag>
+  <script is:inline>
+    window.__fitLockup?.(document.currentScript.previousElementSibling);
+  </script>
+</div>

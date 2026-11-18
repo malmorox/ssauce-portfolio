@@ -1,0 +1,248 @@
+/* ==========================================================================
+   COMPONENTES GLOBALES
+   ========================================================================== */
+@layer components {
+  /* ---------- Layout ---------- */
+  .wrap {
+    inline-size: 100%;
+    max-inline-size: 90rem;
+    margin-inline: auto;
+    padding-inline: max(1rem, 4vw);
+  }
+
+  .section {
+    padding-block: clamp(4rem, 3rem + 6vw, 9rem);
+  }
+
+  .surface-inverse {
+    --paper: var(--inverse-paper);
+    --ink: var(--inverse-ink);
+    --accent-text: var(--inverse-accent-text);
+    background-color: var(--paper);
+    color: var(--ink);
+  }
+
+  /* ---------- Etiqueta de sección: "(02) El insight" ---------- */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: var(--text-caption);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+
+    &::after {
+      content: '';
+      flex: 1;
+      block-size: 1px;
+      background: var(--line);
+    }
+
+    .section-label__num {
+      font-variant-numeric: tabular-nums;
+      color: var(--ink);
+    }
+  }
+
+  /* ---------- Acento editorial: serif en cursiva ---------- */
+  .serif-accent {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  /* ---------- Botones ---------- */
+  .btn {
+    --btn-bg: transparent;
+    --btn-fg: var(--ink);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    min-block-size: 2.75rem;
+    padding: 0.75em 1.4em;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+    font-weight: 600;
+    line-height: 1.1;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color 0.2s,
+      color 0.2s,
+      box-shadow 0.2s,
+      translate 0.2s var(--ease-out-back);
+
+    &:hover {
+      --btn-bg: var(--accent);
+      --btn-fg: var(--on-accent);
+      box-shadow: 4px 4px 0 var(--ink);
+      @media (prefers-reduced-motion: no-preference) {
+        translate: -2px -2px;
+      }
+    }
+
+    &:active {
+      box-shadow: 0 0 0 var(--ink);
+      translate: 0 0;
+    }
+
+    .btn__arrow {
+      transition: translate 0.25s var(--ease-out-back);
+    }
+    &:hover .btn__arrow {
+      @media (prefers-reduced-motion: no-preference) {
+        translate: 0.2em 0;
+      }
+    }
+  }
+
+  .btn--solid {
+    --btn-bg: var(--ink);
+    --btn-fg: var(--paper);
+  }
+
+  .btn--sm {
+    min-block-size: 2.5rem;
+    padding: 0.55em 1.1em;
+    font-size: var(--text-caption);
+  }
+
+  /* ---------- Enlace con subrayado animado ---------- */
+  .link-fancy {
+    text-decoration: none;
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 100% 0.12em;
+    transition: background-size 0.3s var(--ease-out-expo);
+
+    &:hover {
+      background-size: 100% 100%;
+      color: var(--on-accent);
+    }
+
+    @media (forced-colors: active) {
+      text-decoration: underline;
+    }
+  }
+
+  /* ---------- Etiquetas / pills ---------- */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3em 0.75em;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    font-size: var(--text-caption);
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  /* ---------- Sticker decorativo ---------- */
+  .sticker {
+    display: inline-block;
+    padding: 0.45em 0.9em;
+    border: 2px solid var(--on-accent);
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-weight: 700;
+    font-size: var(--text-caption);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 1;
+    white-space: nowrap;
+    rotate: var(--tilt, -6deg);
+    box-shadow: 3px 3px 0 var(--on-accent);
+  }
+
+  .sticker--pop {
+    background: var(--pop);
+    color: var(--on-pop);
+    border-color: var(--on-pop);
+    box-shadow: 3px 3px 0 var(--on-pop);
+  }
+
+  /* ---------- Marcas de corte de imprenta ---------- */
+  .crop-marks {
+    position: absolute;
+    inset: 1rem;
+    pointer-events: none;
+    --mark: 1.25rem;
+    --c: var(--line-strong);
+    background:
+      linear-gradient(var(--c), var(--c)) top left / var(--mark) 1px,
+      linear-gradient(var(--c), var(--c)) top left / 1px var(--mark),
+      linear-gradient(var(--c), var(--c)) top right / var(--mark) 1px,
+      linear-gradient(var(--c), var(--c)) top right / 1px var(--mark),
+      linear-gradient(var(--c), var(--c)) bottom left / var(--mark) 1px,
+      linear-gradient(var(--c), var(--c)) bottom left / 1px var(--mark),
+      linear-gradient(var(--c), var(--c)) bottom right / var(--mark) 1px,
+      linear-gradient(var(--c), var(--c)) bottom right / 1px var(--mark);
+    background-repeat: no-repeat;
+  }
+
+  /* ---------- Lockup tipo póster ----------
+     Cada línea se escala hasta ocupar todo el ancho (text-fit).
+     Fallback para navegadores sin text-fit: script en BaseLayout. */
+  .lockup-wrap {
+    container-type: inline-size;
+  }
+
+  .lockup {
+    --lockup-base: clamp(1.5rem, 1rem + 3vw, 5rem);
+    /* Nunca más ancho que el contenedor, aunque el usuario amplíe la fuente */
+    font-size: min(var(--lockup-base), calc(100cqi / var(--lockup-em, 8)));
+    display: flex;
+    flex-direction: column;
+    gap: 0.14em;
+    line-height: 0.9;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    text-fit: grow per-line-all 600%;
+
+    > span {
+      display: block;
+      white-space: nowrap;
+      text-box: trim-both cap alphabetic;
+    }
+
+    /* La cursiva tiene ascendentes por encima de la mayúscula: solo recortamos abajo */
+    > .serif-accent {
+      text-box: trim-end cap alphabetic;
+    }
+  }
+
+  @supports not (text-fit: grow) {
+    .lockup > span {
+      width: fit-content;
+      font-size: min(var(--text-fit-scale, 1) * 1em, 600%);
+    }
+  }
+
+  /* ---------- Revelado al hacer scroll (decorativo, sin fallback) ---------- */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports ((animation-timeline: view()) and (animation-range: entry)) {
+      .reveal {
+        animation: reveal-up linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 70%;
+      }
+    }
+  }
+
+  @keyframes reveal-up {
+    from {
+      opacity: 0;
+      translate: 0 2.5rem;
+    }
+  }
+}

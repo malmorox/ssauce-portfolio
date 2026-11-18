@@ -1,0 +1,124 @@
+---
+import ProjectCover from './ProjectCover.astro';
+import { CATEGORY_LABELS, coverTransitionName, type Project } from '@utils/projects';
+
+interface Props {
+  project: Project;
+  headingLevel?: 'h2' | 'h3';
+  class?: string;
+}
+
+const { project, headingLevel: Heading = 'h3', class: className } = Astro.props;
+const href = `/projects/${project.slug}`;
+---
+
+<article class:list={['project-card', className]}>
+  <div class="project-card__media">
+    <ProjectCover project={project} transitionName={coverTransitionName(project.slug)} />
+    <span class="project-card__cta sticker" aria-hidden="true">Ver caso →</span>
+  </div>
+
+  <div class="project-card__body">
+    <p class="project-card__meta">
+      <span>{CATEGORY_LABELS[project.category]}</span>
+      <span aria-hidden="true">·</span>
+      <span>{project.year}</span>
+    </p>
+    <Heading class="project-card__title">
+      <a href={href}>{project.title}</a>
+    </Heading>
+    <p class="project-card__client">{project.client}</p>
+  </div>
+</article>
+
+<style>
+  .project-card {
+    position: relative;
+    display: grid;
+    gap: 1.1rem;
+    align-content: start;
+  }
+
+  .project-card__media {
+    position: relative;
+    border-radius: 1.25rem;
+    outline: 2px solid transparent;
+    transition:
+      rotate 0.5s var(--ease-out-back),
+      box-shadow 0.3s;
+  }
+
+  .project-card__cta {
+    position: absolute;
+    inset-block-end: 1rem;
+    inset-inline-end: 1rem;
+    --tilt: -8deg;
+    opacity: 0;
+    scale: 0.6;
+    transition:
+      opacity 0.25s,
+      scale 0.4s var(--ease-out-back);
+  }
+
+  .project-card__meta {
+    display: flex;
+    gap: 0.5rem;
+    font-size: var(--text-caption);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .project-card__title {
+    margin-block-start: 0.35rem;
+    font-size: var(--text-title);
+    letter-spacing: -0.03em;
+
+    a {
+      text-decoration: none;
+
+      /* Enlace estirado: toda la tarjeta es clicable, el nombre accesible es solo el título */
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 1.25rem;
+      }
+
+      &:focus-visible {
+        outline: none;
+      }
+      &:focus-visible::after {
+        outline: 3px solid var(--ink);
+        outline-offset: 6px;
+      }
+    }
+  }
+
+  .project-card__client {
+    margin-block-start: 0.25rem;
+    color: var(--ink-soft);
+  }
+
+  .project-card:hover,
+  .project-card:focus-within {
+    .project-card__media {
+      box-shadow: 8px 8px 0 var(--ink);
+      @media (prefers-reduced-motion: no-preference) {
+        rotate: -1.2deg;
+      }
+    }
+
+    .project-card__cta {
+      opacity: 1;
+      scale: 1;
+    }
+
+    :global(.cover__art) {
+      @media (prefers-reduced-motion: no-preference) {
+        scale: 1.04;
+      }
+    }
+  }
+</style>

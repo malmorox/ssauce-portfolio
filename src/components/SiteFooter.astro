@@ -1,0 +1,138 @@
+---
+import SecretsCounter from '@components/easter-eggs/SecretsCounter.astro';
+import profile from '@data/profile.json';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer surface-inverse">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <p class="footer-brand__name" aria-hidden="true">sofía sauce<span>®</span></p>
+      <p class="footer-brand__tagline serif-accent">Publicidad con salsa desde {profile.location}.</p>
+    </div>
+
+    <SecretsCounter />
+
+    <div class="footer-panic">
+      <button class="panic-button" type="button" data-adbreak-open aria-describedby="panic-note">
+        <span class="panic-button__cap" aria-hidden="true"></span>
+        <span class="panic-button__label">No pulsar</span>
+      </button>
+      <p id="panic-note" class="footer-panic__note">En serio. No lo pulses.</p>
+    </div>
+  </div>
+
+  <div class="wrap footer-bottom">
+    <p>© {year} {profile.name}. Todos los derechos (y las ideas) reservados.</p>
+    <a class="link-fancy" href="#top">Volver arriba <span aria-hidden="true">↑</span></a>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-block: clamp(3rem, 2rem + 4vw, 6rem) 1.5rem;
+  }
+
+  .footer-grid {
+    display: grid;
+    gap: 3rem;
+    grid-template-columns: 1fr;
+
+    @media (min-width: 48rem) {
+      grid-template-columns: 2fr 1.4fr 1fr;
+      align-items: start;
+    }
+  }
+
+  .footer-brand__name {
+    font-size: var(--text-display);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+
+    span {
+      font-size: 0.4em;
+      vertical-align: super;
+      color: var(--accent-text);
+    }
+  }
+
+  .footer-brand__tagline {
+    margin-block-start: 0.75rem;
+    font-size: var(--text-lead);
+    color: var(--ink-soft);
+  }
+
+  /* ---------- El botón prohibido ---------- */
+  .footer-panic {
+    display: grid;
+    justify-items: start;
+    gap: 0.75rem;
+
+    @media (min-width: 48rem) {
+      justify-items: end;
+      text-align: end;
+    }
+  }
+
+  .panic-button {
+    position: relative;
+    display: grid;
+    place-items: center;
+    inline-size: 7.5rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 3px solid var(--ink);
+    background: var(--paper-2);
+    cursor: pointer;
+    box-shadow: 0 6px 0 var(--ink);
+    transition: translate 0.15s, box-shadow 0.15s;
+
+    &:hover .panic-button__cap {
+      scale: 1.04;
+    }
+
+    &:active {
+      translate: 0 4px;
+      box-shadow: 0 2px 0 var(--ink);
+    }
+  }
+
+  .panic-button__cap {
+    position: absolute;
+    inset: 0.6rem;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, color-mix(in oklab, var(--color-wild-strawberry), white 35%), var(--color-wild-strawberry) 60%);
+    box-shadow: inset 0 -6px 0 color-mix(in oklab, var(--color-wild-strawberry), black 25%);
+    transition: scale 0.2s var(--ease-out-back);
+  }
+
+  .panic-button__label {
+    position: relative;
+    max-inline-size: 5ch;
+    font-weight: 800;
+    font-size: var(--text-caption);
+    line-height: 1.05;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-night);
+  }
+
+  .footer-panic__note {
+    font-size: var(--text-caption);
+    color: var(--ink-soft);
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-block-start: 4rem;
+    padding-block-start: 1.5rem;
+    border-block-start: 1px solid var(--line);
+    font-size: var(--text-caption);
+    color: var(--ink-soft);
+  }
+</style>

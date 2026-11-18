@@ -1,0 +1,68 @@
+---
+import SectionLabel from '@components/ui/SectionLabel.astro';
+import ProjectCard from '@components/projects/ProjectCard.astro';
+import { featuredProjects, projects } from '@utils/projects';
+
+const featured = featuredProjects.slice(0, 4);
+---
+
+<section class="section featured" id="proyectos" aria-labelledby="featured-title">
+  <div class="wrap">
+    <SectionLabel number="04" label="Las campañas" />
+
+    <div class="featured__head">
+      <h2 id="featured-title" class="featured__title">
+        Proyectos <span class="serif-accent">destacados</span>
+      </h2>
+      <a class="btn" href="/projects">
+        Ver los {projects.length} proyectos <span class="btn__arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+
+    <ul class="featured__grid">
+      {
+        featured.map((project) => (
+          <li class="reveal">
+            <ProjectCard project={project} />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .featured__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-block: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+  }
+
+  .featured__title {
+    font-size: var(--text-mega);
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+
+    .serif-accent {
+      color: var(--accent-text);
+    }
+  }
+
+  /* Rejilla editorial asimétrica */
+  .featured__grid {
+    display: grid;
+    gap: clamp(2.5rem, 2rem + 2vw, 4rem) clamp(1rem, 0.5rem + 2vw, 2.5rem);
+
+    @media (min-width: 48rem) {
+      grid-template-columns: repeat(12, 1fr);
+
+      > :nth-child(4n + 1) { grid-column: span 7; }
+      > :nth-child(4n + 2) { grid-column: span 5; margin-block-start: 6rem; }
+      > :nth-child(4n + 3) { grid-column: span 5; }
+      > :nth-child(4n + 4) { grid-column: span 7; margin-block-start: -4rem; }
+    }
+  }
+</style>
